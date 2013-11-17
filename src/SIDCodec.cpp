@@ -20,8 +20,9 @@
 
 #include "xbmc/libXBMC_addon.h"
 
-#include "libsidplay/src/player.h"
-#include "builders/resid-builder/include/sidplay/builders/resid.h"
+#include "sidplay/sidplay2.h"
+#include "sidplay/SidTune.h"
+#include "sidplay/builders/resid.h"
 #include "xbmc/xbmc_audiodec_dll.h"
 #include "xbmc/AEChannelData.h"
 
@@ -118,9 +119,9 @@ void ADDON_Announce(const char *flag, const char *sender, const char *message, c
 
 struct SIDContext
 {
-  __sidplay2__::Player player;
+  sidplay2 player;
   sid2_config_t config;
-  SidTune tune;
+  SidTune* tune;
   int64_t pos;
   int track;
 };
@@ -156,14 +157,14 @@ void* Init(const char* strFile, unsigned int filecache, int* channels,
   SIDContext* result = new SIDContext;
 
   // Now load the module
-  bool ok = result->tune.read(data, len);
+  result->tune = new SidTune(data, len);
   delete[] data;
 
-  if (!ok)
+  if (!result->tune)
     return NULL;
 
-  result->tune.selectSong(track);
-  result->player.load(&result->tune);
+  result->tune->selectSong(track);
+  result->player.load(result->tune);
   result->config.clockDefault = SID2_CLOCK_PAL;
   result->config.clockForced = false;
   result->config.clockSpeed = SID2_CLOCK_CORRECT;
@@ -229,8 +230,8 @@ int64_t Seek(void* context, int64_t time)
   uint8_t temp[3840*2];
   if (ctx->pos > time/1000*48000*2)
   {
-    ctx->tune.selectSong(ctx->track);
-    ctx->player.load(&ctx->tune);
+    ctx->tune->selectSong(ctx->track);
+    ctx->player.load(ctx->tune);
     ctx->player.config(ctx->config);
     ctx->pos = 0;
   }
@@ -282,13 +283,8 @@ int TrackCount(const char* strFile)
   XBMC->ReadFile(file, data, len);
   XBMC->CloseFile(file);
 
-  SidTune tune;
-  // Now load the module
-  bool ok = tune.read(data, len);
+  SidTune tune(data, len);
   delete[] data;
-
-  if (!ok)
-    return 1;
 
   return tune.getInfo().songs;
 }
