@@ -6,7 +6,7 @@
 # RESID_LIBRARIES - The libresid-builder libraries
 
 find_path(RESID_INCLUDE_DIRS sidplay/builders/resid.h)
-find_library(RESID_LIBRARIES resid-builder)
+find_library(RESID_LIBRARIES resid-builder PATH_SUFFIXES sidplay/builders)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Resid DEFAULT_MSG RESID_INCLUDE_DIRS RESID_LIBRARIES)
