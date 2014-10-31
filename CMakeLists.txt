@@ -6,7 +6,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR})
 
 enable_language(CXX)
 
-find_package(xbmc REQUIRED)
+find_package(kodi REQUIRED)
 find_package(Sidplay2)
 find_package(Resid)
 
@@ -16,7 +16,7 @@ set(SID_SOURCES src/SIDCodec.cpp)
 
 list(APPEND DEPLIBS ${SIDPLAY2_LIBRARIES}
                     ${RESID_LIBRARIES})
-include_directories(${XBMC_INCLUDE_DIR}
+include_directories(${KODI_INCLUDE_DIR}
                     ${RESID_INCLUDE_DIRS}
                     ${SIDPLAY2_INCLUDE_DIRS})
 

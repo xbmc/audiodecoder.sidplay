@@ -18,13 +18,13 @@
  *
  */
 
-#include "xbmc/libXBMC_addon.h"
+#include "kodi/libXBMC_addon.h"
 
 #include "sidplay/sidplay2.h"
 #include "sidplay/SidTune.h"
 #include "sidplay/builders/resid.h"
-#include "xbmc/xbmc_audiodec_dll.h"
-#include "xbmc/AEChannelData.h"
+#include "kodi/kodi_audiodec_dll.h"
+#include "kodi/AEChannelData.h"
 
 ADDON::CHelper_libXBMC_addon *XBMC           = NULL;
 
