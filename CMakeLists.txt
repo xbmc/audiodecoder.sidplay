@@ -21,3 +21,5 @@ include_directories(${KODI_INCLUDE_DIR}
                     ${SIDPLAY2_INCLUDE_DIRS})
 
 build_addon(audiodecoder.sidplay SID DEPLIBS)
+
+include(CPack)
