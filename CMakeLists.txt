@@ -11,7 +11,11 @@ find_package(kodiplatform REQUIRED)
 find_package(Sidplay2 REQUIRED)
 find_package(Resid REQUIRED)
 
-add_definitions(-DHAVE_UNIX)
+if(WIN32)
+  add_definitions(-DHAVE_MSWINDOWS)
+else()
+  add_definitions(-DHAVE_UNIX)
+endif()
 
 set(SID_SOURCES src/SIDCodec.cpp)
 
