@@ -12,7 +12,11 @@
     name="sid"
     extension=".sid|.sidstream"
     tracks="true"
-    library_linux="audiodecoder.sidplay.so"/>
+    library_linux="audiodecoder.sidplay.so"
+    library_osx="audiodecoder.sidplay.dylib"
+    library_freebsd="audiodecoder.sidplay.so"
+    library_windx="audiodecoder.sidplay.dll"
+    library_android="libaudiodecoder.sidplay.so"/>
   <extension point="xbmc.addon.metadata">
     <summary lang="en">Sidplay Audio Decoder</summary>
     <description lang="en">Sidplay Audio Decoder</description>
