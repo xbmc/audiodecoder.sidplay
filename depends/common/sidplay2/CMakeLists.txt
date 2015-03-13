@@ -5,9 +5,16 @@ cmake_minimum_required(VERSION 2.8)
 include(ExternalProject)
 externalproject_add(sidplay2
                     SOURCE_DIR ${CMAKE_SOURCE_DIR}
-                    UPDATE_COMMAND autoreconf -vif
-                    CONFIGURE_COMMAND <SOURCE_DIR>/configure 
+                    UPDATE_COMMAND autoreconf -vif &&
+                                   autoreconf -vif libsidplay &&
+                                   autoreconf -vif resid &&
+                                   autoreconf -vif builders/resid-builder &&
+                                   autoreconf -vif builders/hardsid-builder &&
+                                   autoreconf -vif libsidutils
+                    CONFIGURE_COMMAND CXXFLAGS=-DHAVE_UNIX <SOURCE_DIR>/configure 
                       --prefix=${OUTPUT_DIR}
+                      --disable-shared
+                      --enable-static
                     INSTALL_COMMAND ""
                     BUILD_IN_SOURCE 1)
 
