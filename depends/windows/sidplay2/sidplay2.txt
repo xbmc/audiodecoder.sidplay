@@ -1,1 +1,1 @@
-sidplay2 http://mirrors.xbmc.org/build-deps/sources/sidplay-libs-2.1.1.tar.gz
+sidplay2 http://mirrors.kodi.tv/build-deps/sources/sidplay-libs-2.1.1.tar.gz
