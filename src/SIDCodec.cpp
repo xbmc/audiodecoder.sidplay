@@ -23,8 +23,8 @@
 #include "sidplay/sidplay2.h"
 #include "sidplay/SidTune.h"
 #include "sidplay/builders/resid.h"
-#include "kodi/kodi_audiodec_dll.h"
-#include "kodi/AEChannelData.h"
+#include "kodi_audiodec_dll.h"
+#include "AEChannelData.h"
 
 ADDON::CHelper_libXBMC_addon *XBMC           = NULL;
 
