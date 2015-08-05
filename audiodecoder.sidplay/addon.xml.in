@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon
   id="audiodecoder.sidplay"
-  version="1.0.1"
+  version="1.0.2"
   name="Sidplay Audio Decoder"
   provider-name="spiff">
   <requires>
@@ -12,14 +12,10 @@
     name="sid"
     extension=".sid|.sidstream"
     tracks="true"
-    library_linux="audiodecoder.sidplay.so"
-    library_osx="audiodecoder.sidplay.dylib"
-    library_freebsd="audiodecoder.sidplay.so"
-    library_windx="audiodecoder.sidplay.dll"
-    library_android="libaudiodecoder.sidplay.so"/>
+    library_@PLATFORM@="@LIBRARY_FILENAME@"/>
   <extension point="xbmc.addon.metadata">
     <summary lang="en">Sidplay Audio Decoder</summary>
     <description lang="en">Sidplay Audio Decoder</description>
-    <platform>all</platform>
+    <platform>@PLATFORM@</platform>
   </extension>
 </addon>
