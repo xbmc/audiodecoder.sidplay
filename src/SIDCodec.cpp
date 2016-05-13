@@ -18,7 +18,7 @@
  *
  */
 
-#include "kodi/libXBMC_addon.h"
+#include "libXBMC_addon.h"
 
 #include "sidplay/sidplay2.h"
 #include "sidplay/SidTune.h"
