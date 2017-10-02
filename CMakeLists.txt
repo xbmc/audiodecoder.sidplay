@@ -26,7 +26,7 @@ list(APPEND DEPLIBS ${p8-platform_LIBRARIES}
 
 include_directories(${kodiplatform_INCLUDE_DIRS}
                     ${p8-platform_INCLUDE_DIRS}
-                    ${KODI_INCLUDE_DIR}
+                    ${KODI_INCLUDE_DIR}/..
                     ${RESID_INCLUDE_DIRS}
                     ${SIDPLAY2_INCLUDE_DIRS})
 

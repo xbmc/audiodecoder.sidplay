@@ -18,231 +18,180 @@
  *
  */
 
-#include "libXBMC_addon.h"
+#include <kodi/addon-instance/AudioDecoder.h>
+#include <kodi/Filesystem.h>
 
 #include "sidplay/sidplay2.h"
 #include "sidplay/SidTune.h"
 #include "sidplay/builders/resid.h"
-#include "kodi_audiodec_dll.h"
-#include "AEChannelData.h"
 
-ADDON::CHelper_libXBMC_addon *XBMC           = NULL;
-
-extern "C" {
-
-//-- Create -------------------------------------------------------------------
-// Called on load. Addon should fully initalize or return error status
-//-----------------------------------------------------------------------------
-ADDON_STATUS ADDON_Create(void* hdl, void* props)
+class CSIDCodec : public kodi::addon::CInstanceAudioDecoder,
+                  public kodi::addon::CAddonBase
 {
-  if (!XBMC)
-    XBMC = new ADDON::CHelper_libXBMC_addon;
+public:
+  CSIDCodec(KODI_HANDLE instance) :
+    CInstanceAudioDecoder(instance) {}
 
-  if (!XBMC->RegisterMe(hdl))
+  virtual ~CSIDCodec()
   {
-    delete XBMC, XBMC=NULL;
-    return ADDON_STATUS_PERMANENT_FAILURE;
+    if (tune)
+      delete tune;
   }
 
-  return ADDON_STATUS_OK;
-}
+  virtual bool Init(const std::string& filename, unsigned int filecache,
+                    int& channels, int& samplerate,
+                    int& bitspersample, int64_t& totaltime,
+                    int& bitrate, AEDataFormat& format,
+                    std::vector<AEChannel>& channellist) override
+  {
+    int track=1;
+    std::string toLoad(filename);
+    if (toLoad.find(".sidstream") != std::string::npos)
+    {
+      size_t iStart=toLoad.rfind('-') + 1;
+      track = atoi(toLoad.substr(iStart, toLoad.size()-iStart-10).c_str());
+      //  The directory we are in, is the file
+      //  that contains the bitstream to play,
+      //  so extract it
+      size_t slash = toLoad.rfind('\\');
+      if (slash == std::string::npos)
+        slash = toLoad.rfind('/');
+      toLoad = toLoad.substr(0, slash);
+    }
 
-//-- Destroy ------------------------------------------------------------------
-// Do everything before unload of this add-on
-// !!! Add-on master function !!!
-//-----------------------------------------------------------------------------
-void ADDON_Destroy()
-{
-  XBMC=NULL;
-}
+    kodi::vfs::CFile file;
+    if (!file.OpenFile(toLoad.c_str(), 0))
+      return false;
 
-//-- GetStatus ---------------------------------------------------------------
-// Returns the current Status of this visualisation
-// !!! Add-on master function !!!
-//-----------------------------------------------------------------------------
-ADDON_STATUS ADDON_GetStatus()
-{
-  return ADDON_STATUS_OK;
-}
+    int len = file.GetLength();
+    uint8_t* data = new uint8_t[len];
+    file.Read(data, len);
+    file.Close();
 
-//-- SetSetting ---------------------------------------------------------------
-// Set a specific Setting value (called from XBMC)
-// !!! Add-on master function !!!
-//-----------------------------------------------------------------------------
-ADDON_STATUS ADDON_SetSetting(const char *strSetting, const void* value)
-{
-  return ADDON_STATUS_OK;
-}
+    // Now load the module
+    tune = new SidTune(data, len);
+    delete[] data;
 
-struct SIDContext
-{
+    if (!tune)
+      return false;
+
+    tune->selectSong(track);
+    player.load(tune);
+    config.clockDefault = SID2_CLOCK_PAL;
+    config.clockForced = false;
+    config.clockSpeed = SID2_CLOCK_CORRECT;
+    config.emulateStereo = false;
+    config.environment = sid2_envR;
+    config.forceDualSids = false;
+    config.frequency = 48000;
+    config.leftVolume = 255;
+    config.optimisation = SID2_DEFAULT_OPTIMISATION;
+    config.playback = sid2_mono;
+    config.powerOnDelay = SID2_DEFAULT_POWER_ON_DELAY;
+    config.precision = 16;
+    config.rightVolume = 255;
+    config.sampleFormat = SID2_LITTLE_SIGNED;
+    ReSIDBuilder* rs = new ReSIDBuilder("Resid Builder");
+    rs->create(player.info().maxsids);
+    rs->filter(true);
+    rs->sampling(48000);
+    config.sidEmulation = rs;
+    pos = 0;
+    track = track;
+
+    player.config(config);
+
+    channels = 1;
+    samplerate = 48000;
+    bitspersample = 16;
+    totaltime = 4*60*1000;
+    format = AE_FMT_S16NE;
+    channellist = { AE_CH_FC };
+    bitrate = 0;
+
+    return true;
+  }
+
+  virtual int ReadPCM(uint8_t* buffer, int size, int& actualsize) override
+  {
+    if ((actualsize = player.play(buffer, size)))
+    {
+      pos += actualsize;
+      return 0;
+    }
+
+    return 1;
+  }
+
+  virtual int64_t Seek(int64_t time) override
+  {
+    uint8_t temp[3840*2];
+    if (pos > time/1000*48000*2)
+    {
+      tune->selectSong(track);
+      player.load(tune);
+      player.config(config);
+      pos = 0;
+    }
+
+    while (pos < time/1000*48000*2)
+    {
+      int64_t iRead = time/1000*48000*2-pos;
+      if (iRead > 3840*2)
+      {
+        player.fastForward(32*100);
+        iRead = 3840*2;
+      }
+      else
+        player.fastForward(100);
+
+      int dummy;
+      ReadPCM(temp, int(iRead), dummy);
+      if (!dummy)
+        break; // get out of here
+    }
+    return time;
+  }
+
+  virtual int TrackCount(const std::string& fileName) override
+  {
+    kodi::vfs::CFile file;
+    if (!file.OpenFile(fileName, 0))
+      return 1;
+
+    int len = file.GetLength();
+    uint8_t* data = new uint8_t[len];
+    file.Read(data, len);
+    file.Close();
+
+    SidTune tune(data, len);
+    delete[] data;
+
+    return tune.getInfo().songs;
+  }
+
+private:
   sidplay2 player;
   sid2_config_t config;
-  SidTune* tune;
+  SidTune* tune = nullptr;
   int64_t pos;
   int track;
 };
 
-void* Init(const char* strFile, unsigned int filecache, int* channels,
-           int* samplerate, int* bitspersample, int64_t* totaltime,
-           int* bitrate, AEDataFormat* format, const AEChannel** channelinfo)
+
+class ATTRIBUTE_HIDDEN CMyAddon : public kodi::addon::CAddonBase
 {
-  int track=1;
-  std::string toLoad(strFile);
-  if (toLoad.find(".sidstream") != std::string::npos)
+public:
+  CMyAddon() { }
+  virtual ADDON_STATUS CreateInstance(int instanceType, std::string instanceID, KODI_HANDLE instance, KODI_HANDLE& addonInstance) override
   {
-    size_t iStart=toLoad.rfind('-') + 1;
-    track = atoi(toLoad.substr(iStart, toLoad.size()-iStart-10).c_str());
-    //  The directory we are in, is the file
-    //  that contains the bitstream to play,
-    //  so extract it
-    size_t slash = toLoad.rfind('\\');
-    if (slash == std::string::npos)
-      slash = toLoad.rfind('/');
-    toLoad = toLoad.substr(0, slash);
+    addonInstance = new CSIDCodec(instance);
+    return ADDON_STATUS_OK;
   }
-
-  void* file = XBMC->OpenFile(toLoad.c_str(), 0);
-  if (!file)
-    return NULL;
-
-  int len = XBMC->GetFileLength(file);
-  uint8_t* data = new uint8_t[len];
-  XBMC->ReadFile(file, data, len);
-  XBMC->CloseFile(file);
-
-  SIDContext* result = new SIDContext;
-
-  // Now load the module
-  result->tune = new SidTune(data, len);
-  delete[] data;
-
-  if (!result->tune)
-    return NULL;
-
-  result->tune->selectSong(track);
-  result->player.load(result->tune);
-  result->config.clockDefault = SID2_CLOCK_PAL;
-  result->config.clockForced = false;
-  result->config.clockSpeed = SID2_CLOCK_CORRECT;
-  result->config.emulateStereo = false;
-  result->config.environment = sid2_envR;
-  result->config.forceDualSids = false;
-  result->config.frequency = 48000;
-  result->config.leftVolume = 255;
-  result->config.optimisation = SID2_DEFAULT_OPTIMISATION;
-  result->config.playback = sid2_mono;
-  result->config.powerOnDelay = SID2_DEFAULT_POWER_ON_DELAY;
-  result->config.precision = 16;
-  result->config.rightVolume = 255;
-  result->config.sampleFormat = SID2_LITTLE_SIGNED;
-  ReSIDBuilder* rs = new ReSIDBuilder("Resid Builder");
-  rs->create (result->player.info().maxsids);
-  rs->filter(true);
-  rs->sampling(48000);
-  result->config.sidEmulation = rs;
-  result->pos = 0;
-  result->track = track;
-
-  result->player.config(result->config);
-
-  *channels = 1;
-  *samplerate = 48000;
-  *bitspersample = 16;
-  *totaltime = 4*60*1000;
-  *format = AE_FMT_S16NE;
-
-  static enum AEChannel map[1][2] = {
-    {AE_CH_FC, AE_CH_NULL}
-  };
-
-  *channelinfo = map[0];
-  *bitrate = 0;
-
-  return result;
-}
-
-int ReadPCM(void* context, uint8_t* pBuffer, int size, int *actualsize)
-{
-  if (!context)
-    return 1;
-
-  SIDContext* ctx = (SIDContext*)context;
-
-  if ((*actualsize = ctx->player.play(pBuffer, size)))
+  virtual ~CMyAddon()
   {
-    ctx->pos += *actualsize;
-    return 0;
   }
-  
-  return 1;
-}
+};
 
-int64_t Seek(void* context, int64_t time)
-{
-  if (!context)
-    return 0;
 
-  SIDContext* ctx = (SIDContext*)context;
-  uint8_t temp[3840*2];
-  if (ctx->pos > time/1000*48000*2)
-  {
-    ctx->tune->selectSong(ctx->track);
-    ctx->player.load(ctx->tune);
-    ctx->player.config(ctx->config);
-    ctx->pos = 0;
-  }
-
-  while (ctx->pos < time/1000*48000*2)
-  {
-    int64_t iRead = time/1000*48000*2-ctx->pos;
-    if (iRead > 3840*2)
-    {
-      ctx->player.fastForward(32*100);
-      iRead = 3840*2;
-    }
-    else
-      ctx->player.fastForward(100);
-
-    int dummy;
-    ReadPCM(ctx, temp, int(iRead), &dummy);
-    iRead = dummy;
-    if (!iRead)
-      break; // get out of here
-    if (iRead == 3840*2)
-      ctx->pos += iRead*32;
-    else ctx->pos += iRead;
-  }
-  return time;
-}
-
-bool DeInit(void* context)
-{
-  delete (SIDContext*)context;
-
-  return true;
-}
-
-bool ReadTag(const char* strFile, char* title, char* artist,
-             int* length)
-{
-  return true;
-}
-
-int TrackCount(const char* strFile)
-{
-  void* file = XBMC->OpenFile(strFile, 0);
-  if (!file)
-    return 1;
-
-  int len = XBMC->GetFileLength(file);
-  uint8_t* data = new uint8_t[len];
-  XBMC->ReadFile(file, data, len);
-  XBMC->CloseFile(file);
-
-  SidTune tune(data, len);
-  delete[] data;
-
-  return tune.getInfo().songs;
-}
-}
+ADDONCREATOR(CMyAddon);
