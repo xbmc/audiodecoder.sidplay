@@ -1,11 +1,8 @@
 --- /dev/null	2015-03-03 09:10:35.165379981 +0100
 +++ sidplay-libs-2.1.1/resid/CMakeLists.txt	2015-03-04 09:46:22.539229340 +0100
-@@ -0,0 +1,47 @@
+@@ -0,0 +1,44 @@
++cmake_minimum_required(VERSION 3.5)
 +project(resid)
-+
-+enable_language(CXX)
-+
-+cmake_minimum_required(VERSION 2.6)
 +
 +set(RESID_INLINE inline)
 +set(RESID_INLINING 1)

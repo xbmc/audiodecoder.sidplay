@@ -1,11 +1,9 @@
 --- /dev/null	2015-03-03 09:10:35.165379981 +0100
 +++ sidplay-libs-2.1.1/libsidplay/CMakeLists.txt	2015-03-04 09:56:43.071217172 +0100
-@@ -0,0 +1,54 @@
+@@ -0,0 +1,52 @@
 +project(sidplay2)
 +
-+enable_language(CXX)
-+
-+cmake_minimum_required(VERSION 2.6)
++cmake_minimum_required(VERSION 3.5)
 +
 +add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -DHAVE_MSWINDOWS)
 +
