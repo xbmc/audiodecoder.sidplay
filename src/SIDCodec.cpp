@@ -25,8 +25,7 @@
 #include "sidplay/SidTune.h"
 #include "sidplay/builders/resid.h"
 
-class CSIDCodec : public kodi::addon::CInstanceAudioDecoder,
-                  public kodi::addon::CAddonBase
+class ATTRIBUTE_HIDDEN CSIDCodec : public kodi::addon::CInstanceAudioDecoder
 {
 public:
   CSIDCodec(KODI_HANDLE instance) :
