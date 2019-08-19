@@ -7,16 +7,15 @@
 
 find_package(PkgConfig)
 if(PKG_CONFIG_FOUND)
-  pkg_check_modules (SIDPLAY2 libsidplay2)
-  list(APPEND SIDPLAY2_INCLUDE_DIRS ${SIDPLAY2_INCLUDEDIR})
+  pkg_check_modules(PC_SIDPLAY2 libsidplay2 QUIET)
 endif()
 
-if(NOT SIDPLAY2_FOUND)
-  find_path(SIDPLAY2_INCLUDE_DIRS sidplay/sidplay2.h)
-  find_library(SIDPLAY2_LIBRARIES sidplay2)
-endif()
+find_path(SIDPLAY2_INCLUDE_DIRS sidplay/sidplay2.h
+                                PATHS ${PC_SIDPLAY2_INCLUDEDIR})
+find_library(SIDPLAY2_LIBRARIES sidplay2
+                                PATHS ${PC_SIDPLAY2_LIBDIR})
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Sidplay2 DEFAULT_MSG SIDPLAY2_INCLUDE_DIRS SIDPLAY2_LIBRARIES)
+find_package_handle_standard_args(Sidplay2 REQUIRED_VARS SIDPLAY2_INCLUDE_DIRS SIDPLAY2_LIBRARIES)
 
 mark_as_advanced(SIDPLAY2_INCLUDE_DIRS SIDPLAY2_LIBRARIES)
