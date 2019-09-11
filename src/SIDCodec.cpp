@@ -37,11 +37,11 @@ public:
       delete tune;
   }
 
-  virtual bool Init(const std::string& filename, unsigned int filecache,
-                    int& channels, int& samplerate,
-                    int& bitspersample, int64_t& totaltime,
-                    int& bitrate, AEDataFormat& format,
-                    std::vector<AEChannel>& channellist) override
+  bool Init(const std::string& filename, unsigned int filecache,
+            int& channels, int& samplerate,
+            int& bitspersample, int64_t& totaltime,
+            int& bitrate, AEDataFormat& format,
+            std::vector<AEChannel>& channellist) override
   {
     int track=1;
     std::string toLoad(filename);
@@ -111,7 +111,7 @@ public:
     return true;
   }
 
-  virtual int ReadPCM(uint8_t* buffer, int size, int& actualsize) override
+  int ReadPCM(uint8_t* buffer, int size, int& actualsize) override
   {
     if ((actualsize = player.play(buffer, size)))
     {
@@ -122,7 +122,7 @@ public:
     return 1;
   }
 
-  virtual int64_t Seek(int64_t time) override
+  int64_t Seek(int64_t time) override
   {
     uint8_t temp[3840*2];
     if (pos > time/1000*48000*2)
@@ -152,7 +152,7 @@ public:
     return time;
   }
 
-  virtual int TrackCount(const std::string& fileName) override
+  int TrackCount(const std::string& fileName) override
   {
     kodi::vfs::CFile file;
     if (!file.OpenFile(fileName, 0))
@@ -181,15 +181,13 @@ private:
 class ATTRIBUTE_HIDDEN CMyAddon : public kodi::addon::CAddonBase
 {
 public:
-  CMyAddon() { }
-  virtual ADDON_STATUS CreateInstance(int instanceType, std::string instanceID, KODI_HANDLE instance, KODI_HANDLE& addonInstance) override
+  CMyAddon() = default;
+  ADDON_STATUS CreateInstance(int instanceType, std::string instanceID, KODI_HANDLE instance, KODI_HANDLE& addonInstance) override
   {
     addonInstance = new CSIDCodec(instance);
     return ADDON_STATUS_OK;
   }
-  virtual ~CMyAddon()
-  {
-  }
+  virtual ~CMyAddon() = default;
 };
 
 
