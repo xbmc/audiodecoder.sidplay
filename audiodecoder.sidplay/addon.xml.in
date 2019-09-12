@@ -9,6 +9,7 @@
     point="kodi.audiodecoder"
     name="sid"
     extension=".sid|.sidstream"
+    tags="true"
     tracks="true"
     library_@PLATFORM@="@LIBRARY_FILENAME@"/>
   <extension point="xbmc.addon.metadata">
