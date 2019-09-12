@@ -24,6 +24,7 @@
 #include "sidplay/sidplay2.h"
 #include "sidplay/SidTune.h"
 #include "sidplay/builders/resid.h"
+#include "sidplay/utils/SidDatabase.h"
 
 class ATTRIBUTE_HIDDEN CSIDCodec : public kodi::addon::CInstanceAudioDecoder
 {
@@ -37,11 +38,11 @@ public:
       delete tune;
   }
 
-  virtual bool Init(const std::string& filename, unsigned int filecache,
-                    int& channels, int& samplerate,
-                    int& bitspersample, int64_t& totaltime,
-                    int& bitrate, AEDataFormat& format,
-                    std::vector<AEChannel>& channellist) override
+  bool Init(const std::string& filename, unsigned int filecache,
+            int& channels, int& samplerate,
+            int& bitspersample, int64_t& totaltime,
+            int& bitrate, AEDataFormat& format,
+            std::vector<AEChannel>& channellist) override
   {
     int track=1;
     std::string toLoad(filename);
@@ -111,7 +112,7 @@ public:
     return true;
   }
 
-  virtual int ReadPCM(uint8_t* buffer, int size, int& actualsize) override
+  int ReadPCM(uint8_t* buffer, int size, int& actualsize) override
   {
     if ((actualsize = player.play(buffer, size)))
     {
@@ -122,7 +123,7 @@ public:
     return 1;
   }
 
-  virtual int64_t Seek(int64_t time) override
+  int64_t Seek(int64_t time) override
   {
     uint8_t temp[3840*2];
     if (pos > time/1000*48000*2)
@@ -152,7 +153,7 @@ public:
     return time;
   }
 
-  virtual int TrackCount(const std::string& fileName) override
+  int TrackCount(const std::string& fileName) override
   {
     kodi::vfs::CFile file;
     if (!file.OpenFile(fileName, 0))
@@ -169,6 +170,38 @@ public:
     return tune.getInfo().songs;
   }
 
+  bool ReadTag(const std::string& filename, std::string& title,
+               std::string& artist, int& length) override
+  {
+    length = -1;
+    SidTuneMod st(filename.c_str());
+    if (!st)
+      return false;
+
+    const SidTuneInfo sti = st.getInfo();
+
+    if (sti.numberOfInfoStrings != 0)
+    {
+      title = sti.infoString[0];
+      if (title == "<?>")
+      {
+        // Fallback to filename if title is set as "<?>"
+        std::string fileName = kodi::vfs::GetFileName(filename);
+        size_t lastindex = fileName.find_last_of(".");
+        title = fileName.substr(0, lastindex);
+      }
+      // Add Artist if present and ignore the rest (TODO: give also another strings, not only title and artist?)
+      if (sti.numberOfInfoStrings > 1)
+      {
+        artist = sti.infoString[1];
+        if (artist == "<?>")
+          artist = "";
+      }
+    }
+
+    return true;
+  }
+
 private:
   sidplay2 player;
   sid2_config_t config;
@@ -181,15 +214,13 @@ private:
 class ATTRIBUTE_HIDDEN CMyAddon : public kodi::addon::CAddonBase
 {
 public:
-  CMyAddon() { }
-  virtual ADDON_STATUS CreateInstance(int instanceType, std::string instanceID, KODI_HANDLE instance, KODI_HANDLE& addonInstance) override
+  CMyAddon() = default;
+  ADDON_STATUS CreateInstance(int instanceType, std::string instanceID, KODI_HANDLE instance, KODI_HANDLE& addonInstance) override
   {
     addonInstance = new CSIDCodec(instance);
     return ADDON_STATUS_OK;
   }
-  virtual ~CMyAddon()
-  {
-  }
+  virtual ~CMyAddon() = default;
 };
 
 
