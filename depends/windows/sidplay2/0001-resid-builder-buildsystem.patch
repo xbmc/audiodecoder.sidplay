@@ -1,11 +1,8 @@
 --- /dev/null	2015-03-03 09:10:35.165379981 +0100
 +++ sidplay-libs-2.1.1/builders/resid-builder/CMakeLists.txt	2015-03-04 09:46:22.539229340 +0100
-@@ -0,0 +1,22 @@
+@@ -0,0 +1,19 @@
++cmake_minimum_required(VERSION 3.5)
 +project(resid-builder)
-+
-+enable_language(CXX)
-+
-+cmake_minimum_required(VERSION 2.6)
 +
 +add_definitions(-D_CRT_SECURE_NO_WARNINGS -DHAVE_MSWINDOWS)
 +

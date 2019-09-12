@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon
   id="audiodecoder.sidplay"
-  version="1.1.3"
+  version="1.2.0"
   name="Sidplay Audio Decoder"
   provider-name="spiff">
   <requires>@ADDON_DEPENDS@</requires>
@@ -9,11 +9,14 @@
     point="kodi.audiodecoder"
     name="sid"
     extension=".sid|.sidstream"
+    tags="true"
     tracks="true"
     library_@PLATFORM@="@LIBRARY_FILENAME@"/>
   <extension point="xbmc.addon.metadata">
-    <summary lang="en">Sidplay Audio Decoder</summary>
-    <description lang="en">Sidplay Audio Decoder</description>
+    <summary lang="en">SID (MOS 6581) Audio Decoder</summary>
+    <description lang="en">Sound Interface Device (SID) is a format that houses Commodore 64 and 128 music.
+
+This is a addon that implements the emulation of the C64's SID chip (MOS 6581) and CPU (6510) by .SID or .SIDSTREAM files.</description>
     <platform>@PLATFORM@</platform>
   </extension>
 </addon>
