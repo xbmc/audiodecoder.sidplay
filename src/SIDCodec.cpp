@@ -24,6 +24,7 @@
 #include "sidplay/sidplay2.h"
 #include "sidplay/SidTune.h"
 #include "sidplay/builders/resid.h"
+#include "sidplay/utils/SidDatabase.h"
 
 class ATTRIBUTE_HIDDEN CSIDCodec : public kodi::addon::CInstanceAudioDecoder
 {
@@ -167,6 +168,38 @@ public:
     delete[] data;
 
     return tune.getInfo().songs;
+  }
+
+  bool ReadTag(const std::string& filename, std::string& title,
+               std::string& artist, int& length) override
+  {
+    length = -1;
+    SidTuneMod st(filename.c_str());
+    if (!st)
+      return false;
+
+    const SidTuneInfo sti = st.getInfo();
+
+    if (sti.numberOfInfoStrings != 0)
+    {
+      title = sti.infoString[0];
+      if (title == "<?>")
+      {
+        // Fallback to filename if title is set as "<?>"
+        std::string fileName = kodi::vfs::GetFileName(filename);
+        size_t lastindex = fileName.find_last_of(".");
+        title = fileName.substr(0, lastindex);
+      }
+      // Add Artist if present and ignore the rest (TODO: give also another strings, not only title and artist?)
+      if (sti.numberOfInfoStrings > 1)
+      {
+        artist = sti.infoString[1];
+        if (artist == "<?>")
+          artist = "";
+      }
+    }
+
+    return true;
   }
 
 private:
