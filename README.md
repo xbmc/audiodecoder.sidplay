@@ -3,7 +3,8 @@
 This is a [Kodi](http://kodi.tv) audio decoder addon for SID music files.
 
 [![Build Status](https://travis-ci.org/xbmc/audiodecoder.sidplay.svg?branch=master)](https://travis-ci.org/xbmc/audiodecoder.sidplay)
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/xbmc/audiodecoder.sidplay?svg=true)](https://ci.appveyor.com/project/xbmc/audiodecoder-sidplay)
+[![Build Status](https://dev.azure.com/teamkodi/binary-addons/_apis/build/status/xbmc.audiodecoder.sidplay?branchName=Leia)](https://dev.azure.com/teamkodi/binary-addons/_build/latest?definitionId=13&branchName=Leia)
+<!--- [![Build Status](https://ci.appveyor.com/api/projects/status/github/xbmc/audiodecoder.sidplay?svg=true)](https://ci.appveyor.com/project/xbmc/audiodecoder-sidplay) -->
 
 ## Build instructions
 

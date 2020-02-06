@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon
   id="audiodecoder.sidplay"
-  version="1.2.1"
+  version="1.2.2"
   name="Sidplay Audio Decoder"
   provider-name="spiff">
   <requires>@ADDON_DEPENDS@</requires>
@@ -18,5 +18,10 @@
 
 This is a addon that implements the emulation of the C64's SID chip (MOS 6581) and CPU (6510) by .SID or .SIDSTREAM files.</description>
     <platform>@PLATFORM@</platform>
+    <license>GPL-2.0</license>
+    <source>https://github.com/xbmc/audiodecoder.sidplay</source>
+    <assets>
+      <icon>icon.png</icon>
+    </assets>
   </extension>
 </addon>
