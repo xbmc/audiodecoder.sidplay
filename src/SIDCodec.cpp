@@ -1,21 +1,8 @@
 /*
- *      Copyright (C) 2005-2020 Team Kodi
- *      http://kodi.tv
+ *  Copyright (C) 2005-2020 Team Kodi (https://kodi.tv)
  *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with Kodi; see the file COPYING.  If not, see
- *  <http://www.gnu.org/licenses/>.
- *
+ *  SPDX-License-Identifier: GPL-2.0-or-later
+ *  See LICENSE.md for more information.
  */
 
 #include <kodi/addon-instance/AudioDecoder.h>
@@ -29,8 +16,8 @@
 class ATTRIBUTE_HIDDEN CSIDCodec : public kodi::addon::CInstanceAudioDecoder
 {
 public:
-  CSIDCodec(KODI_HANDLE instance) :
-    CInstanceAudioDecoder(instance) {}
+  CSIDCodec(KODI_HANDLE instance, const std::string& version) :
+    CInstanceAudioDecoder(instance, version) {}
 
   virtual ~CSIDCodec()
   {
@@ -215,9 +202,9 @@ class ATTRIBUTE_HIDDEN CMyAddon : public kodi::addon::CAddonBase
 {
 public:
   CMyAddon() = default;
-  ADDON_STATUS CreateInstance(int instanceType, std::string instanceID, KODI_HANDLE instance, KODI_HANDLE& addonInstance) override
+  ADDON_STATUS CreateInstance(int instanceType, const std::string& instanceID, KODI_HANDLE instance, const std::string& version, KODI_HANDLE& addonInstance) override
   {
-    addonInstance = new CSIDCodec(instance);
+    addonInstance = new CSIDCodec(instance, version);
     return ADDON_STATUS_OK;
   }
   virtual ~CMyAddon() = default;
