@@ -28,8 +28,8 @@ public:
   bool Init(const std::string& filename, unsigned int filecache,
             int& channels, int& samplerate,
             int& bitspersample, int64_t& totaltime,
-            int& bitrate, AEDataFormat& format,
-            std::vector<AEChannel>& channellist) override
+            int& bitrate, AudioEngineDataFormat& format,
+            std::vector<AudioEngineChannel>& channellist) override
   {
     int track=1;
     std::string toLoad(filename);
@@ -92,8 +92,8 @@ public:
     samplerate = 48000;
     bitspersample = 16;
     totaltime = 4*60*1000;
-    format = AE_FMT_S16NE;
-    channellist = { AE_CH_FC };
+    format = AUDIOENGINE_FMT_S16NE;
+    channellist = { AUDIOENGINE_CH_FC };
     bitrate = 0;
 
     return true;
@@ -157,10 +157,9 @@ public:
     return tune.getInfo().songs;
   }
 
-  bool ReadTag(const std::string& filename, std::string& title,
-               std::string& artist, int& length) override
+  bool ReadTag(const std::string& filename, kodi::addon::AudioDecoderInfoTag& tag) override
   {
-    length = -1;
+    tag.SetDuration(-1);
     SidTuneMod st(filename.c_str());
     if (!st)
       return false;
@@ -169,20 +168,20 @@ public:
 
     if (sti.numberOfInfoStrings != 0)
     {
-      title = sti.infoString[0];
-      if (title == "<?>")
+      tag.SetTitle(sti.infoString[0]);
+      if (tag.GetTitle() == "<?>")
       {
         // Fallback to filename if title is set as "<?>"
         std::string fileName = kodi::vfs::GetFileName(filename);
         size_t lastindex = fileName.find_last_of(".");
-        title = fileName.substr(0, lastindex);
+        tag.SetTitle(fileName.substr(0, lastindex));
       }
       // Add Artist if present and ignore the rest (TODO: give also another strings, not only title and artist?)
       if (sti.numberOfInfoStrings > 1)
       {
-        artist = sti.infoString[1];
-        if (artist == "<?>")
-          artist = "";
+        tag.SetArtist(sti.infoString[1]);
+        if (tag.GetArtist() == "<?>")
+          tag.SetArtist("");
       }
     }
 
