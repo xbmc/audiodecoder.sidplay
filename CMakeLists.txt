@@ -14,6 +14,7 @@ else()
 endif()
 
 set(SID_SOURCES src/SIDCodec.cpp)
+set(SID_HEADERS src/SIDCodec.h)
 
 list(APPEND DEPLIBS ${SIDPLAY2_LIBRARIES}
                     ${RESID_LIBRARIES})
