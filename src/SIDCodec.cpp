@@ -31,22 +31,10 @@ bool CSIDCodec::Init(const std::string& filename,
                      std::vector<AudioEngineChannel>& channellist)
 {
   int track = 1;
-  std::string toLoad(filename);
-  if (toLoad.find(".sidstream") != std::string::npos)
-  {
-    size_t iStart = toLoad.rfind('-') + 1;
-    track = atoi(toLoad.substr(iStart, toLoad.size() - iStart - 10).c_str());
-    //  The directory we are in, is the file
-    //  that contains the bitstream to play,
-    //  so extract it
-    size_t slash = toLoad.rfind('\\');
-    if (slash == std::string::npos)
-      slash = toLoad.rfind('/');
-    toLoad = toLoad.substr(0, slash);
-  }
+  const std::string toLoad = kodi::addon::CInstanceAudioDecoder::GetTrack("sid", filename, track);
 
   kodi::vfs::CFile file;
-  if (!file.OpenFile(toLoad.c_str(), 0))
+  if (!file.OpenFile(toLoad, 0))
     return false;
 
   int len = file.GetLength();
@@ -98,15 +86,15 @@ bool CSIDCodec::Init(const std::string& filename,
   return true;
 }
 
-int CSIDCodec::ReadPCM(uint8_t* buffer, int size, int& actualsize)
+int CSIDCodec::ReadPCM(uint8_t* buffer, size_t size, size_t& actualsize)
 {
   if ((actualsize = player.play(buffer, size)))
   {
     pos += actualsize;
-    return 0;
+    return AUDIODECODER_READ_SUCCESS;
   }
 
-  return 1;
+  return AUDIODECODER_READ_EOF;
 }
 
 int64_t CSIDCodec::Seek(int64_t time)
@@ -131,8 +119,8 @@ int64_t CSIDCodec::Seek(int64_t time)
     else
       player.fastForward(100);
 
-    int dummy;
-    ReadPCM(temp, int(iRead), dummy);
+    size_t dummy;
+    ReadPCM(temp, size_t(iRead), dummy);
     if (!dummy)
       break; // get out of here
   }
@@ -189,7 +177,7 @@ bool CSIDCodec::ReadTag(const std::string& filename, kodi::addon::AudioDecoderIn
 
 //------------------------------------------------------------------------------
 
-class ATTRIBUTE_HIDDEN CMyAddon : public kodi::addon::CAddonBase
+class ATTR_DLL_LOCAL CMyAddon : public kodi::addon::CAddonBase
 {
 public:
   CMyAddon() = default;

@@ -14,7 +14,7 @@
 
 #include <kodi/addon-instance/AudioDecoder.h>
 
-class ATTRIBUTE_HIDDEN CSIDCodec : public kodi::addon::CInstanceAudioDecoder
+class ATTR_DLL_LOCAL CSIDCodec : public kodi::addon::CInstanceAudioDecoder
 {
 public:
   CSIDCodec(KODI_HANDLE instance, const std::string& version);
@@ -29,7 +29,7 @@ public:
             int& bitrate,
             AudioEngineDataFormat& format,
             std::vector<AudioEngineChannel>& channellist) override;
-  int ReadPCM(uint8_t* buffer, int size, int& actualsize) override;
+  int ReadPCM(uint8_t* buffer, size_t size, size_t& actualsize) override;
   int64_t Seek(int64_t time) override;
   int TrackCount(const std::string& fileName) override;
   bool ReadTag(const std::string& filename, kodi::addon::AudioDecoderInfoTag& tag) override;
