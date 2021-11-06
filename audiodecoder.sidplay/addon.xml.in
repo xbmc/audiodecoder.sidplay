@@ -8,10 +8,16 @@
   <extension
     point="kodi.audiodecoder"
     name="sid"
-    extension=".sid|.sidstream"
     tags="true"
     tracks="true"
-    library_@PLATFORM@="@LIBRARY_FILENAME@"/>
+    library_@PLATFORM@="@LIBRARY_FILENAME@">
+    <support>
+      <extension name=".sid">
+        <description>30100</description>
+        <icon>icon.png</icon>
+      </extension>
+    </support>
+  </extension>
   <extension point="xbmc.addon.metadata">
     <platform>@PLATFORM@</platform>
     <license>GPL-2.0-or-later</license>

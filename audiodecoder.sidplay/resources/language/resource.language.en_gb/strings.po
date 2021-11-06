@@ -23,3 +23,9 @@ msgstr ""
 msgctxt "Addon Description"
 msgid "Sound Interface Device (SID) is a format that houses Commodore 64 and 128 music.[CR][CR]This is a addon that implements the emulation of the C64's SID chip (MOS 6581) and CPU (6510) by .SID or .SIDSTREAM files."
 msgstr ""
+
+#. Supported file extension description about ".sid"
+#: audiodecoder.sidplay/addon.xml.in
+msgctxt "#30100"
+msgid "The sid file extension is associated with the audio file format used by Commodore 64 (C64) 8-bit computers."
+msgstr ""
