@@ -17,7 +17,7 @@
 class ATTR_DLL_LOCAL CSIDCodec : public kodi::addon::CInstanceAudioDecoder
 {
 public:
-  CSIDCodec(KODI_HANDLE instance, const std::string& version);
+  CSIDCodec(const kodi::addon::IInstanceInfo& instance);
   virtual ~CSIDCodec();
 
   bool Init(const std::string& filename,
