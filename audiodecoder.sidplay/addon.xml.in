@@ -19,6 +19,7 @@
     <assets>
       <icon>icon.png</icon>
     </assets>
+    <summary lang="ca_ES">Descodificador d&apos;àudio SID (MOS 6581)</summary>
     <summary lang="da_DK">SID (MOS 6581) lydafkoder</summary>
     <summary lang="de_DE">SID (MOS 6581) Audio Decoder</summary>
     <summary lang="en_GB">SID (MOS 6581) Audio Decoder</summary>
