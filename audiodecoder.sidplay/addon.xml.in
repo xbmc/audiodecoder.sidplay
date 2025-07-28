@@ -38,6 +38,7 @@
     <summary lang="ko_KR">SID (MOS 6581) 오디오 디코더</summary>
     <summary lang="pt_BR">Decodificador de Áudio SID (MOS 6581)</summary>
     <summary lang="ru_RU">Аудиодекодер SID (MOS 6581)</summary>
+    <summary lang="sv_SE">SID-ljudavkodare (MOS 6581)</summary>
     <summary lang="zh_CN">SID（MOS 6581）音频解码器</summary>
     <description lang="da_DK">Sound Interface Device (SID) er et format, der huser Commodore 64 og 128 musik.[CR][CR]Dette er et add-on, der implementerer emuleringen af C64&apos;s SID-chip (MOS 6581) og CPU (6510) af .SID eller. SIDSTREAM-filer.</description>
     <description lang="de_DE">Sound Interface Device (SID) ist ein Format, das Commodore 64- und 128 Musik enthält.[CR][CR]Dies ist ein Addon, das die Emulation des SID-Chips (MOS 6581) und der CPU (6510) des C64 durch .SID- oder .SIDSTREAM-Dateien implementiert.</description>
@@ -50,6 +51,7 @@
     <description lang="ko_KR">SID(사운드 인터페이스 장치)는 Commodore 64 및 128 음악을 저장하는 형식입니다.[CR][CR]C64의 SID 칩(MOS 6581)과 CPU(6510)를 .SID 또는 . SIDSTREAM 파일.</description>
     <description lang="pt_BR">Sound Interface Device (SID) é um formato que abriga músicas do Commodore 64 e 128.[CR][CR]Este é um addon que implementa a emulação do chip SID do C64 (MOS 6581) e CPU (6510) por .SID ou . Arquivos SIDSTREAM.</description>
     <description lang="ru_RU">Sound Interface Device (SID) - это формат, в котором хранится музыка Commodore 64 и 128.[CR][CR]Это дополнение, которое реализует эмуляцию SID-чипа C64 (MOS 6581) и процессора (6510) с помощью файлов .SID или .SIDSTREAM.</description>
+    <description lang="sv_SE">Sound Interface Device (SID) är ett format som innehåller musik från Commodore 64 och 128.[CR][CR]Detta är ett tillägg som implementerar emulering av C64:s SID-chip (MOS 6581) och CPU (6510) med .SID- eller .SIDSTREAM-filer.</description>
     <description lang="zh_CN">声音接口设备（SID）是一种容纳 Commodore 64 和 128 音乐的格式。[CR][CR]这是一个通过 .SID 或 .SIDSTREAM 文件实现 C64 的 SID 芯片（MOS 6581）和 CPU（6510）仿真的插件。</description>
   </extension>
 </addon>
