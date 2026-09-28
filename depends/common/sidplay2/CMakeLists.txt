@@ -10,10 +10,13 @@ externalproject_add(sidplay2
                                    autoreconf -vif builders/resid-builder &&
                                    autoreconf -vif builders/hardsid-builder &&
                                    autoreconf -vif libsidutils
-                    CONFIGURE_COMMAND CXXFLAGS=-DHAVE_UNIX <SOURCE_DIR>/configure 
+                    CONFIGURE_COMMAND ${CMAKE_COMMAND} -E env
+                      "CXXFLAGS=${CMAKE_CXX_FLAGS} -DHAVE_UNIX"
+                      <SOURCE_DIR>/configure
                       --prefix=${OUTPUT_DIR}
                       --disable-shared
                       --enable-static
+                      --with-pic
                     INSTALL_COMMAND ""
                     BUILD_IN_SOURCE 1)
 

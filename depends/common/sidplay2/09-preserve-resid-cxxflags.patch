@@ -1,0 +1,16 @@
+--- a/resid/configure.in
++++ b/resid/configure.in
+@@ -24,11 +24,12 @@
+ AC_SUBST(RESID_INLINE)
+
+ dnl Checks for programs.
++resid_cxxflags_set=${CXXFLAGS+set}
+ AC_PROG_CXX
+
+ dnl Set CXXFLAGS for g++. Use -fno-exceptions if supported.
+ if test "$GXX" = yes; then
+-  if test "$ac_test_CXXFLAGS" != set; then
++  if test "$resid_cxxflags_set" != set; then
+     CXXFLAGS="-g -Wall -O2 -funroll-loops -fomit-frame-pointer -fno-exceptions"
+     AC_MSG_CHECKING([whether the C++ compiler ($CXX $CXXFLAGS $LDFLAGS) works])
+     AC_TRY_COMPILE([],
